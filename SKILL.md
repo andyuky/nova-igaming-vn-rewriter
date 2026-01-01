@@ -94,26 +94,56 @@ Before output:
 
 **Requires:** `pip install beautifulsoup4`
 
-### Step 1: Parse HTML
+### Single File Processing
+
+#### Step 1: Parse HTML
 ```bash
 python scripts/html-parser.py path/to/page.html
 ```
-Creates: `page_rewrite.md` (for editing) + `page_meta.json` + backup
+Creates: `page_meta.json` + backup
 
-### Step 2: Rewrite Content
-Edit `page_rewrite.md` - fill in sections:
-- Tiêu đề mới (new title)
-- Mô tả mới (new description)
-- Nội dung mới (new content)
+#### Step 2: Rewrite Content
+Use AI to rewrite sections in metadata file.
 
-### Step 3: Update HTML
+#### Step 3: Update HTML
 ```bash
 python scripts/html-updater.py path/to/page_meta.json
 ```
 
-### Rollback (if failed)
+#### Rollback (if failed)
 ```bash
 python scripts/html-updater.py path/to/page_meta.json --rollback
+```
+
+### Batch Processing (Folder + Subfolders)
+
+Process all HTML files in a folder and all subfolders:
+
+```bash
+# Parse all HTML files (recursive)
+python scripts/batch-processor.py /path/to/html/folder
+
+# Custom output directory
+python scripts/batch-processor.py /path/to/folder -o /output/dir
+
+# Check status
+python scripts/batch-processor.py --status /output/batch_manifest.json
+
+# Resume interrupted batch
+python scripts/batch-processor.py --resume /output/batch_manifest.json
+
+# List files by status
+python scripts/batch-processor.py --list /output/batch_manifest.json --filter parsed
+```
+
+**Output structure:**
+```
+<folder>/.nova-meta/
+├── batch_manifest.json    # Tracks all files
+├── page1_meta.json        # Individual metadata
+├── page2_meta.json
+└── subfolder/
+    └── page3_meta.json
 ```
 
 See `workflows/html-rewrite-workflow.md` for detailed process.
